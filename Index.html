@@ -1,0 +1,1855 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>By Heart · Memorize anything</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%2333684F' d='M4 3h13a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H4z'/%3E%3Cpath fill='%239E2B25' d='M9 3h4v9l-2-1.6L9 12z'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============ tokens ============ */
+:root{
+  --bg:#F2F1EB;            /* cool bone paper */
+  --surface:#FBFAF6;
+  --surface2:#E9E7DC;
+  --ink:#20241F;           /* green-black ink */
+  --muted:#6C7266;
+  --line:#DBD9CC;
+  --accent:#33684F;        /* laurel green */
+  --accent-ink:#FDFCF8;
+  --accent-soft:rgba(51,104,79,.11);
+  --ribbon:#9E2B25;        /* bookmark red, tiny doses */
+  --ribbon-soft:rgba(158,43,37,.10);
+  --hl:#F0E19B;            /* highlighter swipe */
+  --ok:#33684F;
+  --bad:#9E2B25;
+  --extra:#8A6A1F;
+  --shadow:0 1px 2px rgba(32,36,31,.05),0 10px 30px -22px rgba(32,36,31,.35);
+  --r:14px;
+  --font-ui:"IBM Plex Sans",ui-sans-serif,system-ui,"Segoe UI",Roboto,sans-serif;
+  --font-read:"Source Serif 4","Iowan Old Style",Georgia,"Times New Roman",serif;
+  --font-display:"Fraunces","Source Serif 4",Georgia,serif;
+  --read-size:1.22rem;
+}
+[data-theme="dark"]{
+  --bg:#141613;
+  --surface:#1C1F1B;
+  --surface2:#252923;
+  --ink:#E9E8DE;
+  --muted:#9BA093;
+  --line:#2F342C;
+  --accent:#7FBF9E;
+  --accent-ink:#10241B;
+  --accent-soft:rgba(127,191,158,.14);
+  --ribbon:#E0766B;
+  --ribbon-soft:rgba(224,118,107,.14);
+  --hl:#5A4C15;
+  --ok:#7FBF9E;
+  --bad:#E0766B;
+  --extra:#CFA34A;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px -22px rgba(0,0,0,.7);
+}
+body.large{ --read-size:1.5rem; }
+
+/* ============ base ============ */
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto} *,*::before,*::after{transition:none!important;animation:none!important} }
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-ui);font-size:15.5px;line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--font-display);font-weight:600;letter-spacing:-.01em;margin:0}
+h1{font-size:clamp(1.7rem,4.5vw,2.4rem);line-height:1.15}
+h2{font-size:1.12rem;margin:26px 0 12px;display:flex;align-items:center;gap:8px}
+p{margin:.4em 0}
+a{color:var(--accent)}
+button{font-family:inherit;font-size:inherit;color:inherit}
+input,textarea,select{font-family:inherit;font-size:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 12px;outline:none;max-width:100%}
+input:focus-visible,textarea:focus-visible,select:focus-visible{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+textarea{resize:vertical;line-height:1.6}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+::selection{background:var(--hl)}
+.wrap{max-width:920px;margin:0 auto;padding:18px 18px 90px}
+.hidden{display:none!important}
+.mut{color:var(--muted)}
+.small{font-size:.86rem}
+svg.ic{width:1.1em;height:1.1em;vertical-align:-.18em;flex:none}
+
+/* ============ topbar ============ */
+.topbar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.topbar .in{max-width:920px;margin:0 auto;display:flex;align-items:center;gap:10px;padding:10px 18px}
+.brand{display:flex;align-items:center;gap:9px;background:none;border:none;cursor:pointer;padding:4px 6px;border-radius:10px}
+.brand .mark{width:26px;height:26px;border-radius:6px;background:var(--accent);position:relative;flex:none}
+.brand .mark::after{content:"";position:absolute;top:0;left:8px;width:7px;height:15px;background:var(--ribbon);clip-path:polygon(0 0,100% 0,100% 100%,50% 78%,0 100%)}
+.brand .name{font-family:var(--font-display);font-weight:600;font-size:1.12rem;letter-spacing:.06em}
+.topbar .spacer{flex:1}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-weight:500;font-size:.88rem}
+.chip.flame{color:var(--ribbon);border-color:color-mix(in srgb,var(--ribbon) 35%,var(--line));background:var(--ribbon-soft)}
+
+/* ============ buttons ============ */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);background:var(--surface);border-radius:11px;padding:9px 15px;cursor:pointer;font-weight:500;transition:background .15s,border-color .15s,transform .05s}
+.btn:hover{background:var(--surface2)}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{filter:brightness(1.07)}
+.btn.big{padding:12px 20px;font-size:1.02rem;border-radius:13px}
+.btn.ghost{background:transparent}
+.btn.icon{padding:8px;border-radius:10px;line-height:0}
+.btn.danger{color:var(--bad)}
+.btn.danger.confirming{background:var(--ribbon);border-color:var(--ribbon);color:#fff}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.sm{padding:6px 11px;font-size:.88rem;border-radius:9px}
+
+/* segmented control */
+.seg{display:inline-flex;flex-wrap:wrap;gap:4px;background:var(--surface2);border:1px solid var(--line);border-radius:11px;padding:4px}
+.seg button{border:none;background:transparent;padding:6px 12px;border-radius:8px;cursor:pointer;font-weight:500;color:var(--muted);white-space:nowrap}
+.seg button.on{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+
+/* ============ cards ============ */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:var(--shadow)}
+.card+.card{margin-top:14px}
+
+/* ============ dashboard ============ */
+.hero{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;padding:26px 2px 6px;flex-wrap:wrap}
+.hero .sub{color:var(--muted);max-width:46ch;margin-top:8px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:18px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:13px 15px}
+.stat .n{font-family:var(--font-display);font-size:1.55rem;font-weight:600;line-height:1.1;display:flex;align-items:center;gap:7px}
+.stat .l{color:var(--muted);font-size:.84rem;margin-top:2px}
+.stat.due .n{color:var(--ribbon)}
+.continue{display:flex;align-items:center;gap:10px;width:100%;margin-top:16px;cursor:pointer;text-align:left;border-left:4px solid var(--accent)}
+.continue b{font-family:var(--font-display)}
+.continue .arr{margin-left:auto;color:var(--accent)}
+.duelist{display:flex;flex-direction:column;gap:8px}
+.duerow{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--ribbon);border-radius:12px;padding:10px 14px}
+.duerow .t{font-weight:500;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:12px}
+.pcard{display:flex;flex-direction:column;gap:9px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:15px;box-shadow:var(--shadow)}
+.pcard .top{display:flex;align-items:center;gap:8px}
+.tag{font-size:.74rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);border-radius:6px;padding:2px 8px}
+.tag.new{color:var(--muted);background:var(--surface2)}
+.tag.due{color:var(--ribbon);background:var(--ribbon-soft)}
+.pcard h3{font-size:1.06rem;line-height:1.3}
+.pcard .snip{font-family:var(--font-read);color:var(--muted);font-size:.92rem;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.meter{height:7px;background:var(--surface2);border-radius:99px;overflow:hidden}
+.meter i{display:block;height:100%;background:var(--accent);border-radius:99px}
+.pcard .mrow{display:flex;align-items:center;justify-content:space-between;font-size:.84rem;color:var(--muted)}
+.pcard .foot{display:flex;gap:7px;margin-top:2px}
+.pcard .foot .btn:first-child{flex:1}
+.badges{display:flex;flex-wrap:wrap;gap:8px}
+.badge{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:999px;padding:6px 13px;font-size:.88rem;font-weight:500;background:var(--surface)}
+.badge.earned{border-color:color-mix(in srgb,var(--accent) 45%,var(--line));background:var(--accent-soft);color:var(--accent)}
+.badge.locked{color:var(--muted);opacity:.65}
+.empty{padding:34px 22px;text-align:center;border-style:dashed}
+.empty h3{font-size:1.2rem;margin-bottom:6px}
+.foot-note{margin-top:34px;color:var(--muted);font-size:.84rem;text-align:center}
+.backuprow{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+
+/* ============ editor ============ */
+.crumbs{display:flex;align-items:center;gap:8px;margin:14px 0 12px;color:var(--muted)}
+.fld{display:flex;flex-direction:column;gap:6px;margin-bottom:13px}
+.fld label{font-weight:600;font-size:.88rem}
+.fld .hint{color:var(--muted);font-size:.83rem}
+.frow{display:flex;gap:12px;flex-wrap:wrap}
+.frow .fld{flex:1;min-width:180px}
+#edText,#edCustom{font-family:var(--font-read);font-size:1.05rem;min-height:210px}
+.chunkprev{display:flex;flex-direction:column;gap:7px;max-height:330px;overflow:auto;padding:2px}
+.chline{display:flex;gap:10px;background:var(--surface2);border-radius:10px;padding:8px 11px;font-family:var(--font-read);font-size:.98rem;line-height:1.5}
+.chline .num{font-family:var(--font-ui);font-size:.78rem;font-weight:600;color:var(--accent);padding-top:3px;min-width:20px;text-align:right}
+.savebar{position:sticky;bottom:0;display:flex;gap:10px;justify-content:flex-end;padding:12px 0;background:linear-gradient(transparent,var(--bg) 35%)}
+
+/* ============ practice ============ */
+.phead{display:flex;align-items:center;gap:12px;margin:14px 0 4px;flex-wrap:wrap}
+.phead h1{font-size:clamp(1.3rem,3.4vw,1.7rem);flex:1;min-width:200px}
+.mchip{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:.9rem;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 12px}
+.mchip .meter{width:64px}
+.weakline{color:var(--muted);font-size:.86rem;margin:2px 0 4px}
+.weakline b{color:var(--ink);font-family:var(--font-read)}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding:10px 2px;position:sticky;top:49px;z-index:20;background:linear-gradient(var(--bg) 78%,transparent);scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 15px;cursor:pointer;font-weight:500;white-space:nowrap;color:var(--muted)}
+.tab.on{background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 45%,var(--line));color:var(--accent)}
+.panel{margin-top:8px}
+.modehint{color:var(--muted);font-size:.88rem;margin:0 0 12px}
+
+/* reading surface: the book page */
+.ptext{font-family:var(--font-read);font-size:var(--read-size);line-height:1.85;max-width:66ch}
+.ptext .chunk{padding:6px 12px 6px 16px;margin:2px 0;border-left:3px solid transparent;border-radius:8px;transition:background .2s,border-color .2s}
+.ptext .chunk.cur{background:var(--accent-soft);border-left-color:var(--accent)}
+.word{border-radius:5px;padding:1px 1px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.word.hl{background:var(--hl)}
+.hw{display:inline-block;min-width:var(--w,3ch);border-bottom:2px dotted var(--muted);border-radius:3px;cursor:pointer;text-align:left;color:var(--muted);line-height:1.15;background:transparent}
+.hw:hover{background:var(--surface2)}
+.hw.rev{border-bottom-color:var(--accent);color:var(--ink);background:var(--accent-soft)}
+.fltext{font-family:var(--font-read);font-size:calc(var(--read-size)*1.12);line-height:2;letter-spacing:.18em;max-width:66ch;white-space:pre-wrap}
+
+/* listen controls */
+.ctrls{display:flex;align-items:center;justify-content:center;gap:12px;margin:4px 0 10px}
+.cbtn{width:46px;height:46px;border-radius:50%;border:1px solid var(--line);background:var(--surface);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:background .15s}
+.cbtn:hover{background:var(--surface2)}
+.cbtn.big{width:62px;height:62px;background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.cbtn.big:hover{filter:brightness(1.07)}
+.cbtn svg.ic{width:1.35em;height:1.35em;vertical-align:0}
+.cbtn.big svg.ic{width:1.7em;height:1.7em}
+.optrow{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:center;font-size:.9rem}
+.optrow label{display:inline-flex;align-items:center;gap:7px;color:var(--muted);font-weight:500}
+.optrow select{padding:6px 9px;border-radius:9px}
+.switch{position:relative;width:38px;height:22px;appearance:none;background:var(--surface2);border:1px solid var(--line);border-radius:99px;cursor:pointer;transition:background .15s;margin:0}
+.switch::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:var(--muted);transition:transform .15s,background .15s}
+.switch:checked{background:var(--accent);border-color:var(--accent)}
+.switch:checked::after{transform:translateX(16px);background:var(--accent-ink)}
+.ttswarn{border-left:4px solid var(--ribbon)}
+
+/* blanks + type */
+.bl{font-family:var(--font-read);font-size:inherit;padding:0 4px;border:none;border-bottom:2px dotted var(--muted);border-radius:4px 4px 0 0;background:transparent;text-align:center}
+.bl:focus-visible{border-bottom-color:var(--accent);box-shadow:none;background:var(--accent-soft)}
+.bl.ok{border-bottom-color:var(--ok);color:var(--ok);background:var(--accent-soft)}
+.bl.bad{border-bottom-color:var(--bad);color:var(--bad);background:var(--ribbon-soft)}
+.corr{color:var(--ok);font-size:.85em;margin-left:4px}
+#typeBox{font-family:var(--font-read);font-size:1.08rem;min-height:170px;width:100%}
+.scorebar{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:10px}
+.scoreN{font-family:var(--font-display);font-size:2.3rem;font-weight:600;line-height:1}
+.scoreN.good{color:var(--ok)}.scoreN.mid{color:var(--extra)}.scoreN.low{color:var(--bad)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:.85rem}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.dw{border-radius:4px;padding:1px 2px}
+.dw.miss{background:var(--ribbon-soft);color:var(--bad);text-decoration:underline dotted}
+.dw.okw{color:var(--ok)}
+.dw.extra{background:color-mix(in srgb,var(--extra) 16%,transparent);color:var(--extra);text-decoration:line-through}
+.wchips{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
+.wchip{font-family:var(--font-read);background:var(--ribbon-soft);color:var(--bad);border-radius:999px;padding:3px 11px;font-size:.92rem}
+
+/* chain */
+.chainbar{height:8px;background:var(--surface2);border-radius:99px;overflow:hidden;margin:8px 0 14px}
+.chainbar i{display:block;height:100%;background:var(--accent);transition:width .25s}
+.steplabel{font-family:var(--font-display);font-size:1.2rem;font-weight:600}
+.chainbtns{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:16px}
+
+/* flashcards */
+.fcard{min-height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;cursor:pointer;font-family:var(--font-read);font-size:1.25rem;line-height:1.7;padding:26px}
+.fcard .side{max-width:56ch}
+.fcard .flip{color:var(--muted);font-family:var(--font-ui);font-size:.82rem}
+.rateb{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.rateb .btn{min-width:78px}
+
+/* first letters */
+.flnav{display:flex;align-items:center;gap:10px;justify-content:center;margin-top:12px}
+.peekbox{margin-top:12px;padding:12px 16px;background:var(--surface2);border-radius:10px;font-family:var(--font-read);font-size:1.05rem;line-height:1.7}
+
+/* ============ overlay (focus mode) ============ */
+.overlay{position:fixed;inset:0;z-index:60;background:#0E100D;color:#EDEBDF;display:flex;flex-direction:column;padding:max(18px,env(safe-area-inset-top)) 18px max(26px,env(safe-area-inset-bottom))}
+.overlay .otop{display:flex;justify-content:space-between;align-items:center}
+.overlay .otitle{font-size:.9rem;letter-spacing:.08em;text-transform:uppercase;color:#9BA093}
+.overlay .otext{flex:1;display:flex;align-items:center;justify-content:center;text-align:center;font-family:var(--font-read);font-size:clamp(1.5rem,4.5vw,2.3rem);line-height:1.7;padding:10px;max-width:26ch;margin:0 auto}
+.overlay .octrl{display:flex;align-items:center;justify-content:center;gap:22px}
+.overlay .cbtn{background:#1C1F1B;border-color:#2F342C;color:#EDEBDF;width:58px;height:58px}
+.overlay .cbtn.big{width:86px;height:86px;background:#7FBF9E;border-color:#7FBF9E;color:#10241B}
+.overlay .btn{background:transparent;border-color:#2F342C;color:#EDEBDF}
+
+/* ============ toast ============ */
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:11px;font-weight:500;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:80;max-width:88vw;text-align:center}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* kbd hints */
+.kbdhint{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;color:var(--muted);font-size:.8rem;margin-top:20px}
+.kbd{border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;background:var(--surface);padding:1px 7px;font-family:var(--font-ui);font-size:.78rem;font-weight:600}
+@media (max-width:640px){.kbdhint{display:none}}
+@media (max-width:520px){
+  .wrap{padding:14px 13px 80px}
+  .hero{padding-top:14px}
+  .card{padding:15px}
+  .ptext{font-size:calc(var(--read-size)*0.94)}
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="in">
+    <button class="brand" data-act="home" title="By Heart home"><span class="mark"></span><span class="name">BY HEART</span></button>
+    <span class="spacer"></span>
+    <span class="chip flame" id="streakChip" title="Daily streak"></span>
+    <button class="btn icon" id="sizeBtn" title="Toggle large text" aria-label="Toggle large text"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 18 9.5 5h1L16 18"/><path d="M6 14h7"/><path d="M15.5 18l3-7.5h.6l3 7.5"/></svg></button>
+    <button class="btn icon" id="themeBtn" title="Toggle dark mode" aria-label="Toggle dark mode"></button>
+  </div>
+</header>
+
+<main id="app"></main>
+
+<div class="overlay hidden" id="focusOv" role="dialog" aria-label="Focus listening mode">
+  <div class="otop">
+    <span class="otitle" id="ovTitle">Focus mode</span>
+    <button class="btn icon" id="ovClose" aria-label="Close focus mode"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+  </div>
+  <div class="otext" id="ovText">Press play to begin.</div>
+  <div class="octrl">
+    <button class="cbtn" id="ovPrev" aria-label="Previous chunk"><svg class="ic" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
+    <button class="cbtn big" id="ovPlay" aria-label="Play or pause"></button>
+    <button class="cbtn" id="ovNext" aria-label="Next chunk"><svg class="ic" viewBox="0 0 24 24" fill="currentColor"><path d="M16 5h2v14h-2zM4 5v14l11-7z"/></svg></button>
+  </div>
+</div>
+
+<div id="toast" role="status"></div>
+
+<script>
+'use strict';
+/* ================= helpers ================= */
+const $=s=>document.querySelector(s);
+const $$=s=>[...document.querySelectorAll(s)];
+const DAY=86400000;
+const esc=s=>String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const escAttr=esc;
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+const SMOOTH=matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth';
+function localDayStr(d=new Date()){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+let toastTimer=null;
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2600);}
+
+const ICONS={
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  play:'<path fill="currentColor" stroke="none" d="M7 4.8v14.4L19.5 12z"/>',
+  pause:'<path fill="currentColor" stroke="none" d="M6.5 4.5h3.6v15H6.5zM13.9 4.5h3.6v15h-3.6z"/>',
+  prev:'<path fill="currentColor" stroke="none" d="M6 5h2v14H6zM20 5v14L9 12z"/>',
+  next:'<path fill="currentColor" stroke="none" d="M16 5h2v14h-2zM4 5v14l11-7z"/>',
+  repeat:'<path d="M3 12a9 9 0 1 0 2.6-6.3"/><path d="M3 3v5h5"/>',
+  edit:'<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+  trash:'<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/>',
+  back:'<path d="M15 5l-7 7 7 7"/>',
+  flame:'<path fill="currentColor" stroke="none" d="M12 22c4.2 0 7-2.8 7-6.6 0-2.7-1.5-4.6-2.9-6.3-1-1.2-1.9-2.4-2.1-3.8-.1-.6-.7-1-1.2-.6C10.4 6.4 11 9 9.6 10.7 8.9 9.9 8.8 8.9 8.9 8c.1-.7-.7-1.1-1.2-.6C6 9.2 5 11.4 5 13.9 5 19.2 7.8 22 12 22z"/>',
+  sun:'<circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/>',
+  moon:'<path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z"/>',
+  check:'<path d="M4.5 12.5l5 5L19.5 7"/>',
+  eye:'<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/>',
+  focus:'<path d="M4 9V5.5A1.5 1.5 0 0 1 5.5 4H9M15 4h3.5A1.5 1.5 0 0 1 20 5.5V9M20 15v3.5a1.5 1.5 0 0 1-1.5 1.5H15M9 20H5.5A1.5 1.5 0 0 1 4 18.5V15"/>',
+  book:'<path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v17.5H6.5A2.5 2.5 0 0 0 4 22z"/><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>',
+  broom:'<path d="M14 3l7 7M9.5 7.5 16.5 14.5M4 20c1-4 3-6.5 5.5-9l3 3C10 16.5 8 19 4 20z"/>'
+};
+function icon(name){return '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(ICONS[name]||'')+'</svg>';}
+
+/* ================= storage ================= */
+const withTimeout=(p,ms)=>Promise.race([p,new Promise((_,rej)=>setTimeout(()=>rej(new Error('storage timeout')),ms))]);
+const Store={
+  mode:'memory', mem:null, localOK:false, KEY:'byheart-data-v1',
+  async init(){
+    try{localStorage.setItem('__bh_t','1');localStorage.removeItem('__bh_t');this.localOK=true;}
+    catch(e){this.localOK=false;}
+    if(window.storage&&typeof window.storage.set==='function'){
+      try{
+        await withTimeout(window.storage.set('byheart-probe','ok'),2000);
+        this.mode='claude';return;
+      }catch(e){console.warn('Claude storage unavailable here, using device storage instead');}
+    }
+    this.mode=this.localOK?'local':'memory';
+  },
+  async load(){
+    let out=null;
+    if(this.mode==='claude'){
+      try{const r=await withTimeout(window.storage.get(this.KEY),2500);out=r&&r.value?JSON.parse(r.value):null;}
+      catch(e){out=null;}
+    }
+    if(!out&&this.localOK){
+      try{const r=localStorage.getItem(this.KEY);out=r?JSON.parse(r):null;}catch(e){}
+    }
+    if(!out&&this.mode==='memory')out=this.mem;
+    return out;
+  },
+  async persist(data){
+    let s=null;
+    try{s=JSON.stringify(data);}catch(e){console.error('serialize failed',e);return;}
+    if(this.localOK){try{localStorage.setItem(this.KEY,s);}catch(e){}}
+    this.mem=data;
+    if(this.mode==='claude'){
+      try{await window.storage.set(this.KEY,s);}
+      catch(e){
+        this.mode=this.localOK?'local':'memory';
+        console.warn('Claude storage write failed, switched to '+(this.mode==='local'?'device storage':'session memory'));
+      }
+    }
+  }
+};
+let saveTimer=null;
+function save(){clearTimeout(saveTimer);saveTimer=setTimeout(()=>Store.persist(DB),350);}
+window.addEventListener('pagehide',()=>{if(DB){clearTimeout(saveTimer);Store.persist(DB);}});
+
+/* ================= data model ================= */
+let DB=null;
+function freshDB(){
+  return {
+    v:1, seeded:false,
+    prefs:{theme:(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'),large:false,rate:1,repeat:1,loop:false,voiceURI:'',engine:'device',elVoice:null},
+    stats:{streak:0,lastDay:'',seconds:0,sessions:0,perfect:0,earned:[]},
+    passages:[]
+  };
+}
+function migrate(d){
+  const f=freshDB();
+  d.prefs=Object.assign(f.prefs,d.prefs||{});
+  d.stats=Object.assign(f.stats,d.stats||{});
+  d.passages=(d.passages||[]).map(p=>{
+    p.srs=p.srs||{i:0,due:0}; p.history=p.history||[]; p.weak=p.weak||{};
+    p.chunks=p.chunks||[]; p.chunkStats=p.chunkStats||p.chunks.map(()=>({m:0}));
+    while(p.chunkStats.length<p.chunks.length)p.chunkStats.push({m:0});
+    return p;
+  });
+  return d;
+}
+function findP(id){return DB.passages.find(p=>p.id===id);}
+
+const SAMPLE_TEXT=`The LORD is my shepherd; I shall not want.
+He maketh me to lie down in green pastures: he leadeth me beside the still waters.
+He restoreth my soul: he leadeth me in the paths of righteousness for his name's sake.
+Yea, though I walk through the valley of the shadow of death, I will fear no evil: for thou art with me; thy rod and thy staff they comfort me.
+Thou preparest a table before me in the presence of mine enemies: thou anointest my head with oil; my cup runneth over.
+Surely goodness and mercy shall follow me all the days of my life: and I will dwell in the house of the LORD for ever.`;
+function seedSample(){
+  const text=SAMPLE_TEXT;
+  const chunks=makeChunks(text,'line','');
+  DB.passages.push({
+    id:uid(),title:'Psalm 23 (KJV)',category:'Scripture',notes:'Sample passage. Feel free to delete it.',
+    text,method:'line',chunks,chunkStats:chunks.map(()=>({m:0})),
+    created:Date.now(),lastPracticed:0,mastery:0,srs:{i:0,due:0},history:[],weak:{}
+  });
+}
+
+/* ================= text utilities ================= */
+const TOKRE=/(\n)|([\p{L}\p{N}][\p{L}\p{N}'\u2019\-]*)|([^\S\n]+)|([^\s])/gu;
+function tokenize(t){
+  const out=[];let m;TOKRE.lastIndex=0;
+  while((m=TOKRE.exec(t))!==null){
+    if(m[1])out.push({k:'br',x:'\n'});
+    else if(m[2])out.push({k:'w',x:m[2]});
+    else if(m[3])out.push({k:'s',x:m[3]});
+    else out.push({k:'p',x:m[4]});
+  }
+  return out;
+}
+function wordsOf(t){return tokenize(t).filter(tk=>tk.k==='w').map(tk=>tk.x);}
+function normWord(w,strict){return strict?w:w.toLowerCase().replace(/[^\p{L}\p{N}']/gu,'');}
+
+function cleanText(t){
+  t=String(t).replace(/\r\n?/g,'\n');
+  t=t.replace(/[\t\u00a0]+/g,' ');
+  t=t.replace(/[ ]{2,}/g,' ');
+  t=t.replace(/ +\n/g,'\n').replace(/\n +/g,'\n');
+  t=t.replace(/\n{3,}/g,'\n\n');
+  // join wrapped lines: a line that does not end a sentence, followed by a lowercase continuation
+  t=t.replace(/([^\n.!?\u2026:;"'\u201d\u2019)\]])\n(?=[a-z(\u201c"'])/g,'$1 ');
+  t=t.replace(/ +([,.;:!?\u2026])/g,'$1');
+  return t.trim();
+}
+function firstLetters(t){
+  return tokenize(t).map(tk=>tk.k==='w'?tk.x[0]:tk.x).join('').replace(/[ ]{2,}/g,' ');
+}
+function splitParas(t){return t.split(/\n{2,}/).map(s=>s.trim()).filter(Boolean);}
+function splitLines(t){return t.split(/\n+/).map(s=>s.trim()).filter(Boolean);}
+function splitSentences(t){
+  const out=[];
+  for(const para of splitParas(t)){
+    const flat=para.replace(/\n/g,' ');
+    const m=flat.match(/[^.!?\u2026]+[.!?\u2026]+[\u201d\u2019"')\]]*|[^.!?\u2026]+$/g)||[flat];
+    for(const s of m){const v=s.trim();if(v)out.push(v);}
+  }
+  return out;
+}
+function splitAfterCommas(s){
+  const r=[];let buf='';
+  for(let i=0;i<s.length;i++){
+    buf+=s[i];
+    if(/[,;:]/.test(s[i])&&s[i+1]===' '){r.push(buf.trim());buf='';i++;}
+  }
+  if(buf.trim())r.push(buf.trim());
+  return r;
+}
+function splitPhrases(t){
+  const out=[];
+  for(const s of splitSentences(t)){
+    if(wordsOf(s).length<=14){out.push(s);continue;}
+    const bits=splitAfterCommas(s);
+    let cur='';
+    for(const b of bits){
+      if(!cur)cur=b;
+      else if(wordsOf(cur).length<4||wordsOf(b).length<3)cur+=' '+b;
+      else{out.push(cur);cur=b;}
+    }
+    if(cur)out.push(cur);
+  }
+  return out;
+}
+function makeChunks(text,method,custom){
+  switch(method){
+    case 'phrase':return splitPhrases(text);
+    case 'line':return splitLines(text);
+    case 'para':return splitParas(text);
+    case 'custom':return String(custom||'').split(/\n/).map(s=>s.trim()).filter(Boolean);
+    default:return splitSentences(text);
+  }
+}
+function suggestMethod(text){
+  const lines=splitLines(text);
+  if(lines.length>=4){
+    const avg=lines.reduce((a,l)=>a+l.length,0)/lines.length;
+    if(avg<65)return 'line';
+  }
+  return 'sentence';
+}
+/* ================= word diff (LCS) ================= */
+function diffWords(a,b,strict){
+  let A=a,B=b;
+  if(A.length>1200)A=A.slice(0,1200);
+  if(B.length>1400)B=B.slice(0,1400);
+  const na=A.map(w=>normWord(w,strict)),nb=B.map(w=>normWord(w,strict));
+  const m=A.length,n=B.length,W=n+1;
+  const dp=new Uint16Array((m+1)*(n+1));
+  for(let i=m-1;i>=0;i--){
+    for(let j=n-1;j>=0;j--){
+      dp[i*W+j]=(na[i]===nb[j])?dp[(i+1)*W+j+1]+1:Math.max(dp[(i+1)*W+j],dp[i*W+j+1]);
+    }
+  }
+  const fa=new Array(a.length).fill(0),fb=new Array(b.length).fill(0);
+  let i=0,j=0,match=0;
+  while(i<m&&j<n){
+    if(na[i]===nb[j]){fa[i]=1;fb[j]=1;match++;i++;j++;}
+    else if(dp[(i+1)*W+j]>=dp[i*W+j+1])i++;
+    else j++;
+  }
+  return {fa,fb,match};
+}
+
+/* ================= mastery, spaced repetition, streak, badges ================= */
+const INTERVALS=[0,1,3,7,14,30];
+function touchStreak(){
+  const t=localDayStr(),s=DB.stats;
+  if(s.lastDay===t)return;
+  const y=localDayStr(new Date(Date.now()-DAY));
+  s.streak=(s.lastDay===y)?s.streak+1:1;
+  s.lastDay=t;
+  save();checkBadges();updateHeader();
+}
+let clockStart=0;
+function startClock(){clockStart=Date.now();}
+function flushClock(){
+  if(!clockStart)return;
+  const d=clamp(Date.now()-clockStart,0,30*60000);
+  DB.stats.seconds=(DB.stats.seconds||0)+Math.round(d/1000);
+  clockStart=Date.now();
+  save();
+}
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden){if(clockStart)flushClock();}
+  else if(VIEW&&VIEW.name==='practice'){clockStart=Date.now();}
+});
+function applyScore(p,score,mode){
+  score=clamp(Math.round(score),0,100);
+  p.history.push({t:Date.now(),m:mode,s:score});
+  if(p.history.length>200)p.history.shift();
+  p.mastery=clamp(Math.round((p.mastery||0)*0.6+score*0.4),0,100);
+  if(!p.srs)p.srs={i:0,due:0};
+  if(score>=90)p.srs.i=Math.min(INTERVALS.length-1,p.srs.i+1);
+  else if(score>=70)p.srs.i=Math.max(p.srs.i,1);
+  else p.srs.i=Math.max(0,p.srs.i-1);
+  const base=new Date();base.setHours(0,0,0,0);
+  p.srs.due=INTERVALS[p.srs.i]===0?Date.now()+4*3600e3:base.getTime()+INTERVALS[p.srs.i]*DAY;
+  p.lastPracticed=Date.now();
+  DB.stats.sessions++;
+  if(score===100)DB.stats.perfect=(DB.stats.perfect||0)+1;
+  touchStreak();flushClock();save();checkBadges();
+}
+function addWeak(p,words){
+  for(const w of words){
+    const k=normWord(w,false);
+    if(!k||k.length<2)continue;
+    p.weak[k]=(p.weak[k]||0)+1;
+  }
+  const keys=Object.keys(p.weak);
+  if(keys.length>60){
+    keys.sort((a,b)=>p.weak[a]-p.weak[b]);
+    for(const k of keys.slice(0,keys.length-50))delete p.weak[k];
+  }
+  save();
+}
+function topWeak(p,n=6){
+  return Object.entries(p.weak||{}).sort((a,b)=>b[1]-a[1]).slice(0,n);
+}
+function dueLabel(p){
+  if(!p.lastPracticed)return 'New';
+  const d=(p.srs&&p.srs.due)||0;
+  if(!d)return 'Practice to schedule';
+  const now=Date.now();
+  if(d<=now)return 'Due now';
+  if(localDayStr(new Date(d))===localDayStr())return 'Later today';
+  if(localDayStr(new Date(d))===localDayStr(new Date(Date.now()+DAY)))return 'Tomorrow';
+  return 'In '+Math.max(1,Math.round((d-now)/DAY))+' days';
+}
+function isDue(p){return !!(p.lastPracticed&&p.srs&&p.srs.due&&p.srs.due<=Date.now());}
+
+const BADGES=[
+  {id:'first',name:'First passage added',test:d=>d.passages.length>=1},
+  {id:'streak3',name:'3-day streak',test:d=>d.stats.streak>=3},
+  {id:'streak7',name:'7-day streak',test:d=>d.stats.streak>=7},
+  {id:'master1',name:'First passage mastered',test:d=>d.passages.some(p=>p.mastery>=90)},
+  {id:'master10',name:'10 passages mastered',test:d=>d.passages.filter(p=>p.mastery>=90).length>=10},
+  {id:'perfect',name:'Perfect recall',test:d=>(d.stats.perfect||0)>=1}
+];
+function checkBadges(){
+  for(const b of BADGES){
+    if(!DB.stats.earned.includes(b.id)&&b.test(DB)){
+      DB.stats.earned.push(b.id);
+      toast('Badge earned: '+b.name);
+      save();
+    }
+  }
+}
+
+/* ================= text to speech engine ================= */
+const TTS={
+  ok:('speechSynthesis' in window)&&('SpeechSynthesisUtterance' in window),
+  voices:[],chunks:[],idx:0,rep:1,repLeft:1,state:'idle',_cancel:false,
+  onchunk:null,onword:null,onstate:null,
+  init(){
+    if(!this.ok)return;
+    const load=()=>{
+      const v=speechSynthesis.getVoices()||[];
+      if(v.length){this.voices=v;refreshVoiceSelect();}
+    };
+    load();
+    try{speechSynthesis.onvoiceschanged=load;}catch(e){}
+  },
+  voice(){
+    const uri=DB.prefs.voiceURI;
+    let v=this.voices.find(x=>x.voiceURI===uri);
+    if(!v)v=this.voices.find(x=>/^en/i.test(x.lang)&&x.default)||this.voices.find(x=>/^en/i.test(x.lang))||this.voices[0];
+    return v||null;
+  },
+  start(chunks,at=0){
+    if(!this.ok||!chunks.length)return;
+    this.hardCancel();
+    this.chunks=chunks;
+    this.idx=clamp(at,0,chunks.length-1);
+    this.rep=clamp(DB.prefs.repeat||1,1,5);
+    this.repLeft=this.rep;
+    this.state='playing';this.emit();
+    this.speak();
+  },
+  speak(){
+    if(this.idx>=this.chunks.length){
+      if(DB.prefs.loop&&this.chunks.length){this.idx=0;this.repLeft=this.rep;}
+      else{this.state='idle';this.emit();if(this.onchunk)this.onchunk(-1);return;}
+    }
+    const text=this.chunks[this.idx].replace(/\s+/g,' ').trim();
+    const u=new SpeechSynthesisUtterance(text);
+    u.rate=clamp(DB.prefs.rate||1,0.5,2);
+    const v=this.voice();if(v)u.voice=v;
+    const ci=this.idx;
+    u.onstart=()=>{if(this.onchunk)this.onchunk(ci);};
+    u.onboundary=e=>{if(this.onword&&(e.name==='word'||typeof e.charIndex==='number'))this.onword(ci,e.charIndex||0);};
+    u.onend=()=>{
+      if(this._cancel)return;
+      if(--this.repLeft>0){this.speak();}
+      else{this.idx++;this.repLeft=this.rep;this.speak();}
+    };
+    u.onerror=()=>{
+      if(this._cancel)return;
+      this.idx++;this.repLeft=this.rep;this.speak();
+    };
+    speechSynthesis.speak(u);
+  },
+  toggle(startFn){
+    if(!this.ok)return;
+    if(this.state==='playing'){speechSynthesis.pause();this.state='paused';this.emit();}
+    else if(this.state==='paused'){speechSynthesis.resume();this.state='playing';this.emit();}
+    else if(startFn){startFn();}
+  },
+  jump(d){
+    if(!this.chunks.length)return;
+    this.hardCancel();
+    this.idx=clamp(this.idx+d,0,this.chunks.length-1);
+    this.repLeft=this.rep;
+    this.state='playing';this.emit();
+    setTimeout(()=>{this._cancel=false;this.speak();},80);
+  },
+  again(){this.jump(0);},
+  hardCancel(){
+    if(!this.ok)return;
+    this._cancel=true;
+    try{speechSynthesis.cancel();}catch(e){}
+    setTimeout(()=>{this._cancel=false;},60);
+  },
+  stop(){
+    if(!this.ok)return;
+    this.hardCancel();
+    this.state='idle';this.emit();
+    if(this.onchunk)this.onchunk(-1);
+  },
+  emit(){if(this.onstate)this.onstate(this.state);}
+};
+
+/* ================= elevenlabs engine ================= */
+const ELKey={
+  _mem:'',
+  get(){try{return localStorage.getItem('byheart-elkey')||this._mem;}catch(e){return this._mem;}},
+  set(k){this._mem=k;try{localStorage.setItem('byheart-elkey',k);}catch(e){}},
+  clear(){this._mem='';try{localStorage.removeItem('byheart-elkey');}catch(e){}}
+};
+const ELDB={
+  db:null,
+  open(){
+    return new Promise(res=>{
+      if(this.db)return res(this.db);
+      if(!('indexedDB' in window))return res(null);
+      try{
+        const rq=indexedDB.open('byheart-audio',1);
+        rq.onupgradeneeded=()=>{rq.result.createObjectStore('clips');};
+        rq.onsuccess=()=>{this.db=rq.result;res(this.db);};
+        rq.onerror=()=>res(null);
+      }catch(e){res(null);}
+    });
+  },
+  req(mode,fn){
+    return this.open().then(db=>{
+      if(!db)return null;
+      return new Promise(res=>{
+        try{
+          const r=fn(db.transaction('clips',mode).objectStore('clips'));
+          r.onsuccess=()=>res(r.result===undefined?true:r.result);
+          r.onerror=()=>res(null);
+        }catch(e){res(null);}
+      });
+    });
+  },
+  get(key){return this.req('readonly',s=>s.get(key));},
+  put(key,val){return this.req('readwrite',s=>s.put(val,key));},
+  clear(){return this.req('readwrite',s=>s.clear());}
+};
+const EL={
+  state:'idle',chunks:[],idx:0,rep:1,repLeft:1,
+  audio:null,align:null,raf:0,lastChar:-1,curURL:'',token:0,fetching:false,voicesCache:null,
+  onchunk:null,onword:null,onstate:null,onstatus:null,
+  MODEL:'eleven_multilingual_v2',
+  hasKey(){return !!ELKey.get();},
+  voiceId(){return (DB&&DB.prefs.elVoice&&DB.prefs.elVoice.id)||'';},
+  cacheKey(text){return this.voiceId()+'\u0001'+this.MODEL+'\u0001'+text;},
+  status(msg){if(this.onstatus)this.onstatus(msg);},
+  async api(path,opts){
+    const r=await fetch('https://api.elevenlabs.io'+path,Object.assign({},opts,{
+      headers:Object.assign({'xi-api-key':ELKey.get()},(opts&&opts.headers)||{})
+    }));
+    if(!r.ok){
+      let msg='ElevenLabs error '+r.status;
+      try{const j=await r.json();const d=j&&j.detail;if(d)msg=typeof d==='string'?d:(d.message||d.status||msg);}catch(e){}
+      if(r.status===401)msg='ElevenLabs rejected that API key';
+      const err=new Error(msg);err.status=r.status;throw err;
+    }
+    return r;
+  },
+  async listVoices(){
+    const r=await this.api('/v1/voices');
+    const j=await r.json();
+    return (j.voices||[]).map(v=>({id:v.voice_id,name:v.name,category:v.category||'',preview:v.preview_url||''}));
+  },
+  async fetchClip(text){
+    const body={text,model_id:this.MODEL,voice_settings:{stability:0.5,similarity_boost:0.75}};
+    const r=await this.api('/v1/text-to-speech/'+encodeURIComponent(this.voiceId())+'/with-timestamps',{
+      method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const j=await r.json();
+    const a=j.alignment||j.normalized_alignment||null;
+    return {b64:j.audio_base64||'',align:a?{starts:a.character_start_times_seconds||[]}:null};
+  },
+  async ensureClip(text){
+    const key=this.cacheKey(text);
+    const hit=await ELDB.get(key);
+    if(hit&&hit.b64)return hit;
+    this.status('Generating audio...');
+    const clip=await this.fetchClip(text);
+    await ELDB.put(key,clip);
+    this.status('');
+    return clip;
+  },
+  async generateAll(p,onprog){
+    let done=0,made=0;
+    for(const raw of p.chunks){
+      const text=raw.replace(/\s+/g,' ').trim();
+      const hit=await ELDB.get(this.cacheKey(text));
+      if(!hit||!hit.b64){
+        const clip=await this.fetchClip(text);
+        await ELDB.put(this.cacheKey(text),clip);
+        made++;
+      }
+      done++;if(onprog)onprog(done,p.chunks.length);
+    }
+    return made;
+  },
+  start(chunks,at=0){
+    if(!this.hasKey()||!this.voiceId())return;
+    this.token++;this.cleanupAudio();
+    this.chunks=chunks;this.idx=clamp(at,0,chunks.length-1);
+    this.rep=clamp(DB.prefs.repeat||1,1,5);this.repLeft=this.rep;
+    this.state='playing';this.emit();
+    this.speak();
+  },
+  async speak(){
+    const my=this.token;
+    if(this.idx>=this.chunks.length){
+      if(DB.prefs.loop&&this.chunks.length){this.idx=0;this.repLeft=this.rep;}
+      else{this.state='idle';this.emit();if(this.onchunk)this.onchunk(-1);return;}
+    }
+    const ci=this.idx;
+    const text=this.chunks[ci].replace(/\s+/g,' ').trim();
+    let clip=null;
+    this.fetching=true;
+    try{clip=await this.ensureClip(text);}
+    catch(e){
+      this.fetching=false;
+      if(my!==this.token)return;
+      this.status('');this.state='idle';this.emit();
+      toast((e&&e.message)||'ElevenLabs request failed');
+      return;
+    }
+    this.fetching=false;
+    if(my!==this.token)return;
+    this.playClip(clip,ci);
+  },
+  playClip(clip,ci){
+    this.cleanupAudio();
+    let blob;
+    try{
+      const bin=atob(clip.b64);
+      const bytes=new Uint8Array(bin.length);
+      for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+      blob=new Blob([bytes],{type:'audio/mpeg'});
+    }catch(e){this.state='idle';this.emit();toast('Cached audio could not be decoded');return;}
+    const url=URL.createObjectURL(blob);
+    this.curURL=url;
+    const a=new Audio(url);
+    this.audio=a;this.align=clip.align;this.lastChar=-1;
+    a.playbackRate=clamp(DB.prefs.rate||1,0.5,2);
+    try{a.preservesPitch=true;}catch(e){}
+    a.onplay=()=>{if(this.audio!==a)return;if(this.onchunk)this.onchunk(ci);this.tick(ci);};
+    a.onended=()=>{
+      if(this.audio!==a)return;
+      if(--this.repLeft>0){a.currentTime=0;a.play().catch(()=>{});}
+      else{this.idx++;this.repLeft=this.rep;this.speak();}
+    };
+    a.onerror=()=>{if(this.audio!==a)return;this.idx++;this.repLeft=this.rep;this.speak();};
+    if(this.state==='paused')return;
+    a.play().catch(()=>{this.state='idle';this.emit();toast('Tap play to start audio');});
+  },
+  tick(ci){
+    cancelAnimationFrame(this.raf);
+    const step=()=>{
+      if(!this.audio||this.state!=='playing')return;
+      const al=this.align;
+      if(al&&al.starts&&al.starts.length&&this.onword){
+        const t=this.audio.currentTime;
+        let lo=0,hi=al.starts.length-1,i=0;
+        while(lo<=hi){const mid=(lo+hi)>>1;if(al.starts[mid]<=t){i=mid;lo=mid+1;}else hi=mid-1;}
+        if(i!==this.lastChar){this.lastChar=i;this.onword(ci,i);}
+      }
+      this.raf=requestAnimationFrame(step);
+    };
+    this.raf=requestAnimationFrame(step);
+  },
+  toggle(startFn){
+    if(this.state==='playing'){
+      if(this.audio)try{this.audio.pause();}catch(e){}
+      cancelAnimationFrame(this.raf);
+      this.state='paused';this.emit();
+    }else if(this.state==='paused'){
+      this.state='playing';this.emit();
+      if(this.audio)this.audio.play().catch(()=>{});
+      else if(!this.fetching)this.speak();
+    }else if(startFn)startFn();
+  },
+  jump(d){
+    if(!this.chunks.length)return;
+    this.token++;this.cleanupAudio();
+    this.idx=clamp(this.idx+d,0,this.chunks.length-1);
+    this.repLeft=this.rep;
+    this.state='playing';this.emit();
+    this.speak();
+  },
+  again(){this.jump(0);},
+  cleanupAudio(){
+    cancelAnimationFrame(this.raf);
+    if(this.audio){const a=this.audio;this.audio=null;a.onended=null;a.onerror=null;a.onplay=null;try{a.pause();}catch(e){}}
+    if(this.curURL){try{URL.revokeObjectURL(this.curURL);}catch(e){}this.curURL='';}
+    this.align=null;this.lastChar=-1;
+  },
+  stop(){
+    this.token++;this.cleanupAudio();
+    if(this.state!=='idle'){this.state='idle';this.emit();}
+    if(this.onchunk)this.onchunk(-1);
+  },
+  emit(){if(this.onstate)this.onstate(this.state);}
+};
+function ENGINE(){return DB&&DB.prefs.engine==='eleven'?EL:TTS;}
+function stopAll(){TTS.stop();EL.stop();}
+/* ================= router ================= */
+let VIEW={name:'dash'};
+function go(v){
+  if(VIEW.name==='practice'&&v.name!=='practice'){flushClock();clockStart=0;stopAll();closeFocus();}
+  VIEW=v;
+  if(v.name==='practice')startClock();
+  render();
+  window.scrollTo({top:0,behavior:'auto'});
+}
+function render(){
+  const app=$('#app');
+  if(VIEW.name==='dash')renderDash(app);
+  else if(VIEW.name==='edit')renderEdit(app,VIEW.id);
+  else if(VIEW.name==='practice')renderPractice(app);
+  updateHeader();
+}
+function updateHeader(){
+  const s=DB.stats;
+  const active=s.lastDay===localDayStr()||s.lastDay===localDayStr(new Date(Date.now()-DAY));
+  const n=active?s.streak:0;
+  $('#streakChip').innerHTML=icon('flame')+' <span>'+n+' day'+(n===1?'':'s')+'</span>';
+  $('#themeBtn').innerHTML=icon(DB.prefs.theme==='dark'?'sun':'moon');
+}
+
+/* ================= global actions ================= */
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-act]');
+  if(!el)return;
+  const act=el.dataset.act,id=el.dataset.id;
+  if(act==='home')go({name:'dash'});
+  else if(act==='add')go({name:'edit'});
+  else if(act==='edit')go({name:'edit',id});
+  else if(act==='practice')go({name:'practice',id});
+  else if(act==='del'){
+    if(el.classList.contains('confirming')){
+      DB.passages=DB.passages.filter(p=>p.id!==id);
+      save();toast('Passage deleted');render();
+    }else{
+      el.classList.add('confirming');
+      el.innerHTML='Confirm?';
+      setTimeout(()=>{if(document.body.contains(el)){el.classList.remove('confirming');el.innerHTML=icon('trash');}},2800);
+    }
+  }
+});
+$('#themeBtn').addEventListener('click',()=>{
+  DB.prefs.theme=DB.prefs.theme==='dark'?'light':'dark';
+  document.documentElement.dataset.theme=DB.prefs.theme;
+  save();updateHeader();
+});
+$('#sizeBtn').addEventListener('click',()=>{
+  DB.prefs.large=!DB.prefs.large;
+  document.body.classList.toggle('large',DB.prefs.large);
+  save();toast(DB.prefs.large?'Large text on':'Large text off');
+});
+
+/* ================= dashboard ================= */
+function renderDash(app){
+  const ps=[...DB.passages];
+  const due=ps.filter(isDue);
+  const mastered=ps.filter(p=>p.mastery>=90).length;
+  const mins=Math.round((DB.stats.seconds||0)/60);
+  const s=DB.stats;
+  const streakActive=s.lastDay===localDayStr()||s.lastDay===localDayStr(new Date(Date.now()-DAY));
+  const streak=streakActive?s.streak:0;
+  const last=ps.filter(p=>p.lastPracticed).sort((a,b)=>b.lastPracticed-a.lastPracticed)[0];
+  ps.sort((a,b)=>{
+    const da=isDue(a)?0:1,db=isDue(b)?0:1;
+    if(da!==db)return da-db;
+    return (b.lastPracticed||b.created)-(a.lastPracticed||a.created);
+  });
+  const pcard=p=>{
+    const snip=p.text.slice(0,110);
+    const tag=isDue(p)?'<span class="tag due">Due</span>':(!p.lastPracticed?'<span class="tag new">New</span>':(p.category?'<span class="tag">'+esc(p.category)+'</span>':''));
+    return `<article class="pcard">
+      <div class="top">${tag}<span class="spacer" style="flex:1"></span><span class="mut small">${esc(dueLabel(p))}</span></div>
+      <h3>${esc(p.title)}</h3>
+      <div class="snip">${esc(snip)}${p.text.length>110?'&hellip;':''}</div>
+      <div class="meter" title="Mastery"><i style="width:${p.mastery||0}%"></i></div>
+      <div class="mrow"><span>${p.mastery||0}% mastered</span><span>${p.chunks.length} chunk${p.chunks.length===1?'':'s'}</span></div>
+      <div class="foot">
+        <button class="btn primary sm" data-act="practice" data-id="${p.id}">Practice</button>
+        <button class="btn icon sm" data-act="edit" data-id="${p.id}" title="Edit" aria-label="Edit ${escAttr(p.title)}">${icon('edit')}</button>
+        <button class="btn icon sm danger" data-act="del" data-id="${p.id}" title="Delete" aria-label="Delete ${escAttr(p.title)}">${icon('trash')}</button>
+      </div>
+    </article>`;
+  };
+  const duerow=p=>`<div class="duerow"><span class="t">${esc(p.title)}</span><span class="mut small">${p.mastery||0}%</span><button class="btn primary sm" data-act="practice" data-id="${p.id}">Review</button></div>`;
+  const badgesHtml=BADGES.map(b=>{
+    const on=DB.stats.earned.includes(b.id);
+    return `<span class="badge ${on?'earned':'locked'}">${on?icon('check'):icon('flame')} ${esc(b.name)}</span>`;
+  }).join('');
+  app.innerHTML=`<div class="wrap">
+    <section class="hero">
+      <div>
+        <h1>Keep it in mind.<br>Carry it by heart.</h1>
+        <p class="sub">Paste a passage, listen to it, hide the words a little at a time, and recall it until it stays with you.</p>
+      </div>
+      <button class="btn primary big" data-act="add">${icon('plus')} Add passage</button>
+    </section>
+    <section class="stats">
+      <div class="stat"><div class="n" style="color:var(--ribbon)">${icon('flame')} ${streak}</div><div class="l">Day streak</div></div>
+      <div class="stat ${due.length?'due':''}"><div class="n">${due.length}</div><div class="l">Due for review</div></div>
+      <div class="stat"><div class="n">${mastered}</div><div class="l">Passages mastered</div></div>
+      <div class="stat"><div class="n">${mins}</div><div class="l">Minutes practiced</div></div>
+    </section>
+    ${last?`<button class="card continue" data-act="practice" data-id="${last.id}">${icon('book')} <span>Continue memorizing <b>${esc(last.title)}</b></span><span class="arr">${icon('next')}</span></button>`:''}
+    ${due.length?`<h2 style="color:var(--ribbon)">Due for review</h2><div class="duelist">${due.map(duerow).join('')}</div>`:''}
+    <h2>Your passages</h2>
+    ${ps.length?`<div class="pgrid">${ps.map(pcard).join('')}</div>`:`<div class="card empty">
+      <h3>Nothing here yet</h3>
+      <p class="mut">Add a verse, a speech, a poem, or anything you want to know by heart.</p>
+      <p style="margin-top:14px"><button class="btn primary" data-act="add">${icon('plus')} Add your first passage</button></p>
+    </div>`}
+    <h2>Badges</h2>
+    <div class="badges">${badgesHtml}</div>
+    <p class="foot-note">${Store.mode==='memory'?'Saving is blocked in this viewer, so progress lasts for this session only. Download the file and open it in a browser to keep everything.':'By Heart saves your passages and progress automatically on this device.'}</p>
+    <div class="backuprow">
+      <button class="btn sm" id="expBtn">Export backup</button>
+      <button class="btn sm" id="impBtn">Import backup</button>
+      <input type="file" id="impFile" accept=".json,application/json" class="hidden">
+    </div>
+  </div>`;
+  $('#expBtn').addEventListener('click',()=>{
+    const url=URL.createObjectURL(new Blob([JSON.stringify(DB)],{type:'application/json'}));
+    const a=document.createElement('a');
+    a.href=url;a.download='byheart-backup-'+localDayStr()+'.json';
+    document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>{try{URL.revokeObjectURL(url);}catch(e){}},4000);
+    toast('Backup downloaded');
+  });
+  $('#impBtn').addEventListener('click',()=>$('#impFile').click());
+  $('#impFile').addEventListener('change',e=>{
+    const f=e.target.files&&e.target.files[0];if(!f)return;
+    const rd=new FileReader();
+    rd.onload=()=>{
+      try{
+        const data=JSON.parse(rd.result);
+        if(!data||!Array.isArray(data.passages))throw new Error('bad');
+        DB=migrate(data);
+        save();render();toast('Backup restored');
+      }catch(err){toast('That file is not a By Heart backup');}
+    };
+    rd.readAsText(f);
+  });
+}
+
+/* ================= editor ================= */
+let ED=null;
+function renderEdit(app,id){
+  const p=id?findP(id):null;
+  if(id&&!p){go({name:'dash'});return;}
+  ED={
+    id:p?p.id:null,
+    title:p?p.title:'',
+    category:p?p.category:'',
+    notes:p?p.notes:'',
+    text:p?p.text:'',
+    method:p?p.method:'sentence',
+    custom:p&&p.method==='custom'?p.chunks.join('\n'):''
+  };
+  const methods=[['sentence','Sentence'],['phrase','Phrase'],['line','Verse / line'],['para','Paragraph'],['custom','Custom']];
+  app.innerHTML=`<div class="wrap">
+    <div class="crumbs"><button class="btn icon ghost" data-act="home" aria-label="Back">${icon('back')}</button><span>${p?'Edit passage':'New passage'}</span></div>
+    <div class="card">
+      <div class="frow">
+        <div class="fld" style="flex:2"><label for="edTitle">Title</label><input id="edTitle" placeholder="Psalm 23, Gettysburg Address, ..." value="${escAttr(ED.title)}"></div>
+        <div class="fld"><label for="edCat">Category</label><input id="edCat" list="catList" placeholder="Scripture, Speech, Poem..." value="${escAttr(ED.category)}">
+          <datalist id="catList"><option>Scripture</option><option>Speech</option><option>Poem</option><option>Song lyrics</option><option>School</option><option>Quote</option></datalist>
+        </div>
+      </div>
+      <div class="fld"><label for="edText">Passage text</label>
+        <textarea id="edText" placeholder="Paste or type the passage here...">${esc(ED.text)}</textarea>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <button class="btn sm" id="cleanBtn">${icon('broom')} Clean text</button>
+          <span class="mut small" id="wcount"></span>
+        </div>
+      </div>
+      <div class="fld"><label for="edNotes">Notes <span class="mut" style="font-weight:400">(optional)</span></label><input id="edNotes" placeholder="Reference, occasion, reminders..." value="${escAttr(ED.notes)}"></div>
+    </div>
+    <div class="card">
+      <div class="fld"><label>Split into chunks by</label>
+        <div class="seg" id="methodSeg">${methods.map(m=>`<button data-m="${m[0]}" class="${ED.method===m[0]?'on':''}">${m[1]}</button>`).join('')}</div>
+        <div class="hint">Chunks are the pieces you will memorize one at a time. Verse / line splits on line breaks, which suits scripture, poetry, and lyrics.</div>
+      </div>
+      <div class="fld hidden" id="customWrap"><label for="edCustom">Custom chunks <span class="mut" style="font-weight:400">(one chunk per line)</span></label>
+        <textarea id="edCustom">${esc(ED.custom)}</textarea>
+      </div>
+      <div class="fld"><label>Chunk preview <span class="mut small" id="chcount" style="font-weight:400"></span></label>
+        <div class="chunkprev" id="chunkPrev"></div>
+      </div>
+    </div>
+    <div class="savebar">
+      <button class="btn" data-act="home">Cancel</button>
+      <button class="btn primary big" id="saveBtn">${icon('check')} Save passage</button>
+    </div>
+  </div>`;
+
+  const refresh=()=>{
+    const chunks=makeChunks(ED.text,ED.method,ED.custom);
+    $('#wcount').textContent=wordsOf(ED.text).length+' words';
+    $('#chcount').textContent='('+chunks.length+' chunk'+(chunks.length===1?'':'s')+')';
+    $('#chunkPrev').innerHTML=chunks.length
+      ?chunks.map((c,i)=>`<div class="chline"><span class="num">${i+1}</span><span>${esc(c)}</span></div>`).join('')
+      :'<div class="mut small" style="padding:8px 4px">Paste some text above to see chunks here.</div>';
+    $('#customWrap').classList.toggle('hidden',ED.method!=='custom');
+  };
+  let deb=null;
+  const debRefresh=()=>{clearTimeout(deb);deb=setTimeout(refresh,220);};
+  $('#edTitle').addEventListener('input',e=>ED.title=e.target.value);
+  $('#edCat').addEventListener('input',e=>ED.category=e.target.value);
+  $('#edNotes').addEventListener('input',e=>ED.notes=e.target.value);
+  $('#edText').addEventListener('input',e=>{
+    ED.text=e.target.value;
+    if(!ED.touchedMethod&&!ED.id)ED.method=suggestMethod(ED.text);
+    $$('#methodSeg button').forEach(b=>b.classList.toggle('on',b.dataset.m===ED.method));
+    debRefresh();
+  });
+  $('#edCustom').addEventListener('input',e=>{ED.custom=e.target.value;debRefresh();});
+  $('#cleanBtn').addEventListener('click',()=>{
+    ED.text=cleanText(ED.text);
+    $('#edText').value=ED.text;
+    refresh();toast('Text cleaned');
+  });
+  $('#methodSeg').addEventListener('click',e=>{
+    const b=e.target.closest('button');if(!b)return;
+    ED.method=b.dataset.m;ED.touchedMethod=true;
+    if(ED.method==='custom'&&!ED.custom.trim()){
+      ED.custom=makeChunks(ED.text,'sentence','').join('\n');
+      $('#edCustom').value=ED.custom;
+    }
+    $$('#methodSeg button').forEach(x=>x.classList.toggle('on',x===b));
+    refresh();
+  });
+  $('#saveBtn').addEventListener('click',savePassage);
+  refresh();
+}
+function savePassage(){
+  const title=ED.title.trim()||'Untitled passage';
+  const text=ED.text.trim();
+  if(!text){toast('Paste some text first');return;}
+  const chunks=makeChunks(text,ED.method,ED.custom);
+  if(!chunks.length){toast('No chunks found. Check the split method.');return;}
+  let p;
+  if(ED.id){
+    p=findP(ED.id);
+    const changed=p.text!==text||JSON.stringify(p.chunks)!==JSON.stringify(chunks);
+    Object.assign(p,{title,category:ED.category.trim(),notes:ED.notes.trim(),text,method:ED.method,chunks});
+    if(changed){
+      const old=p.chunkStats||[];
+      p.chunkStats=chunks.map((_,i)=>old[i]||{m:0});
+    }
+  }else{
+    p={id:uid(),title,category:ED.category.trim(),notes:ED.notes.trim(),text,method:ED.method,chunks,
+       chunkStats:chunks.map(()=>({m:0})),created:Date.now(),lastPracticed:0,mastery:0,srs:{i:0,due:0},history:[],weak:{}};
+    DB.passages.unshift(p);
+  }
+  save();checkBadges();toast('Passage saved');
+  go({name:'practice',id:p.id});
+}
+/* ================= practice ================= */
+let PS=null;
+const MODES=[['listen','Listen'],['hide','Hide'],['letters','Letters'],['blanks','Blanks'],['type','Type'],['chain','Chain'],['cards','Cards']];
+const Listen={start:null,step:null};
+
+function initPS(p){
+  PS={pid:p.id,mode:'listen',chunk:0,peek:false,hide:1,
+      fl:{scope:'all',idx:0,peek:false},
+      type:{scope:-1,strict:false},
+      blanks:{pct:0.4},
+      chain:{on:false,step:0,struggles:0,vis:'full',scored:false},
+      cards:{on:false,order:[],i:0,flip:false,ratings:[],scored:false}};
+}
+function weakHTML(p){
+  const tw=topWeak(p);
+  return tw.length?'Tricky words: '+tw.map(([w,c])=>'<b>'+esc(w)+'</b>'+(c>1?' &times;'+c:'')).join(', '):'';
+}
+function updatePHead(p){
+  const el=$('#mchip');
+  if(el)el.innerHTML='<span class="meter"><i style="width:'+(p.mastery||0)+'%"></i></span> '+(p.mastery||0)+'%';
+  const wl=$('#weakline');
+  if(wl)wl.innerHTML=weakHTML(p);
+}
+function renderPractice(app){
+  const p=findP(VIEW.id);
+  if(!p){go({name:'dash'});return;}
+  if(!PS||PS.pid!==p.id)initPS(p);
+  app.innerHTML=`<div class="wrap">
+    <div class="phead">
+      <button class="btn icon ghost" data-act="home" aria-label="Back to dashboard">${icon('back')}</button>
+      <h1>${esc(p.title)}</h1>
+      ${p.category?`<span class="tag">${esc(p.category)}</span>`:''}
+      <span class="mchip" id="mchip" title="Mastery"><span class="meter"><i style="width:${p.mastery||0}%"></i></span> ${p.mastery||0}%</span>
+    </div>
+    ${p.notes?`<div class="mut small" style="margin-bottom:2px">${esc(p.notes)}</div>`:''}
+    <div class="weakline" id="weakline">${weakHTML(p)}</div>
+    <div class="tabs" id="tabs">${MODES.map(m=>`<button class="tab ${PS.mode===m[0]?'on':''}" data-m="${m[0]}">${m[1]}</button>`).join('')}</div>
+    <div class="panel" id="panel"></div>
+    <div class="kbdhint">
+      <span><span class="kbd">Space</span> play / pause</span>
+      <span><span class="kbd">R</span> repeat chunk</span>
+      <span><span class="kbd">N</span> / <span class="kbd">P</span> next / previous</span>
+      <span><span class="kbd">H</span> hide / reveal</span>
+    </div>
+  </div>`;
+  $('#tabs').addEventListener('click',e=>{
+    const b=e.target.closest('.tab');if(!b)return;
+    stopAll();PS.mode=b.dataset.m;
+    $$('#tabs .tab').forEach(x=>x.classList.toggle('on',x===b));
+    renderPanel();
+  });
+  const panel=$('#panel');
+  panel.addEventListener('click',e=>{
+    const h=e.target.closest('.hw');if(!h)return;
+    const rev=h.classList.toggle('rev');
+    h.textContent=rev?h.dataset.w:(h.dataset.f==='1'?h.dataset.w[0]:'\u00a0');
+  });
+  panel.addEventListener('keydown',e=>{
+    if((e.key==='Enter'||e.key===' ')&&e.target.classList&&e.target.classList.contains('hw')){e.preventDefault();e.target.click();}
+  });
+  renderPanel();
+}
+function renderPanel(){
+  const p=findP(PS.pid),box=$('#panel');
+  if(!p||!box)return;
+  TTS.onchunk=null;TTS.onword=null;
+  if(PS.mode==='listen')panelListen(box,p);
+  else if(PS.mode==='hide')panelHide(box,p);
+  else if(PS.mode==='letters')panelLetters(box,p);
+  else if(PS.mode==='blanks')panelBlanks(box,p);
+  else if(PS.mode==='type')panelType(box,p);
+  else if(PS.mode==='chain')panelChain(box,p);
+  else panelCards(box,p);
+}
+
+/* ---------- listen ---------- */
+function listenHTML(p){
+  return p.chunks.map((c,ci)=>{
+    const flat=c.replace(/\s+/g,' ').trim();
+    let off=0;
+    const inner=tokenize(flat).map(tk=>{
+      const start=off;off+=tk.x.length;
+      if(tk.k==='w')return `<span class="word" data-s="${start}">${esc(tk.x)}</span>`;
+      return esc(tk.x);
+    }).join('');
+    return `<div class="chunk ${ci===PS.chunk?'cur':''}" data-ci="${ci}" role="button" tabindex="0">${inner}</div>`;
+  }).join('');
+}
+function panelListen(box,p){
+  const useEL=DB.prefs.engine==='eleven';
+  const canPlay=useEL||TTS.ok;
+  const rates=[0.5,0.75,1,1.25,1.5];
+  box.innerHTML=`
+    <p class="modehint">Read along while it plays. The current line and word are highlighted. Tap any line to jump there.</p>
+    <div class="card">
+      ${canPlay?`<div class="ctrls">
+        <button class="cbtn" id="pvBtn" aria-label="Previous chunk">${icon('prev')}</button>
+        <button class="cbtn big" id="playBtn" aria-label="Play or pause">${icon('play')}</button>
+        <button class="cbtn" id="nxBtn" aria-label="Next chunk">${icon('next')}</button>
+        <button class="cbtn" id="rpBtn" title="Repeat this chunk" aria-label="Repeat this chunk">${icon('repeat')}</button>
+      </div>`:''}
+      <div class="optrow">
+        <label>Engine <select id="engSel">
+          <option value="device" ${useEL?'':'selected'}>Device voices</option>
+          <option value="eleven" ${useEL?'selected':''}>ElevenLabs</option>
+        </select></label>
+        <label>Speed <select id="rateSel">${rates.map(r=>`<option value="${r}" ${Number(DB.prefs.rate)===r?'selected':''}>${r}x</option>`).join('')}</select></label>
+        <label>Repeat each <select id="repSel">${[1,2,3,4,5].map(n=>`<option value="${n}" ${(DB.prefs.repeat||1)===n?'selected':''}>${n}x</option>`).join('')}</select></label>
+        ${useEL?'':'<label>Voice <select id="voiceSel"></select></label>'}
+        <label><input type="checkbox" class="switch" id="loopChk" ${DB.prefs.loop?'checked':''}> Loop</label>
+        ${canPlay?`<button class="btn sm" id="focusBtn">${icon('focus')} Focus mode</button>`:''}
+      </div>
+      ${(!useEL&&!TTS.ok)?`<div class="hint" style="margin-top:10px"><b>Read aloud is not available with device voices in this browser.</b> Switch the engine to ElevenLabs above, or open the app in Safari, Chrome, or Edge. Every other practice mode still works.</div>`:''}
+    </div>
+    ${useEL?elPanelHTML():''}
+    <div class="card"><div class="ptext" id="listenText">${listenHTML(p)}</div></div>`;
+  refreshVoiceSelect();
+
+  const markChunk=ci=>{
+    $$('#listenText .chunk').forEach(el=>{
+      const on=+el.dataset.ci===ci;
+      el.classList.toggle('cur',on);
+      if(!on)el.querySelectorAll('.word.hl').forEach(w=>w.classList.remove('hl'));
+      if(on)el.scrollIntoView({block:'center',behavior:SMOOTH});
+    });
+  };
+  const startPlayback=()=>{
+    if(DB.prefs.engine==='eleven'){
+      if(!EL.hasKey()){toast('Save your ElevenLabs key below first');return;}
+      if(!EL.voiceId()){toast('Pick an ElevenLabs voice first');return;}
+    }
+    touchStreak();ENGINE().start(p.chunks,PS.chunk);
+  };
+  Listen.start=startPlayback;
+  Listen.step=d=>{
+    PS.chunk=clamp(PS.chunk+d,0,p.chunks.length-1);
+    markChunk(PS.chunk);
+    if(!$('#focusOv').classList.contains('hidden'))$('#ovText').textContent=p.chunks[PS.chunk].replace(/\s+/g,' ');
+  };
+  [TTS,EL].forEach(g=>{
+    g.onchunk=ci=>{
+      if(ci>=0)PS.chunk=ci;
+      markChunk(ci);
+      if(!$('#focusOv').classList.contains('hidden')){
+        $('#ovText').textContent=ci<0?'Finished. Press play to hear it again.':p.chunks[ci].replace(/\s+/g,' ');
+      }
+    };
+    g.onword=(ci,idx)=>{
+      const el=document.querySelector('#listenText .chunk[data-ci="'+ci+'"]');
+      if(!el)return;
+      let target=null;
+      el.querySelectorAll('.word').forEach(w=>{if(+w.dataset.s<=idx)target=w;});
+      el.querySelectorAll('.word.hl').forEach(w=>w.classList.remove('hl'));
+      if(target)target.classList.add('hl');
+    };
+    g.onstate=st=>{
+      const ic=st==='playing'?icon('pause'):icon('play');
+      const pb=$('#playBtn');if(pb)pb.innerHTML=ic;
+      const op=$('#ovPlay');if(op)op.innerHTML=ic;
+    };
+  });
+  EL.onstatus=msg=>{const st=$('#elStatus');if(st&&msg)st.textContent=msg;};
+  ENGINE().onstate(ENGINE().state);
+
+  if(canPlay){
+    $('#playBtn').addEventListener('click',()=>ENGINE().toggle(startPlayback));
+    $('#pvBtn').addEventListener('click',()=>{const g=ENGINE();g.state!=='idle'?g.jump(-1):Listen.step(-1);});
+    $('#nxBtn').addEventListener('click',()=>{const g=ENGINE();g.state!=='idle'?g.jump(1):Listen.step(1);});
+    $('#rpBtn').addEventListener('click',()=>{const g=ENGINE();g.state!=='idle'?g.again():startPlayback();});
+    $('#focusBtn').addEventListener('click',()=>openFocus(p));
+  }
+  $('#engSel').addEventListener('change',e=>{
+    stopAll();
+    DB.prefs.engine=e.target.value;save();
+    renderPanel();
+  });
+  $('#rateSel').addEventListener('change',e=>{
+    DB.prefs.rate=Number(e.target.value);
+    if(EL.audio)try{EL.audio.playbackRate=Number(e.target.value);}catch(err){}
+    save();
+  });
+  $('#repSel').addEventListener('change',e=>{DB.prefs.repeat=Number(e.target.value);save();});
+  const dvs=$('#voiceSel');
+  if(dvs)dvs.addEventListener('change',e=>{DB.prefs.voiceURI=e.target.value;save();});
+  $('#loopChk').addEventListener('change',e=>{DB.prefs.loop=e.target.checked;save();});
+  $('#listenText').addEventListener('click',e=>{
+    const c=e.target.closest('.chunk');if(!c)return;
+    PS.chunk=+c.dataset.ci;
+    const g=ENGINE();
+    if(g.state!=='idle'){g.idx=PS.chunk;g.jump(0);}
+    else markChunk(PS.chunk);
+  });
+  $('#listenText').addEventListener('keydown',e=>{
+    if(e.key==='Enter'&&e.target.classList.contains('chunk'))e.target.click();
+  });
+  if(useEL)wireELPanel(p);
+}
+function elPanelHTML(){
+  if(!EL.hasKey()){
+    return `<div class="card" id="elPanel">
+      <div class="fld"><label for="elKey">ElevenLabs API key</label>
+        <input id="elKey" type="password" placeholder="sk_..." autocomplete="off">
+        <div class="hint">Create a free account at elevenlabs.io, open your profile menu, copy an API key, and paste it here. The key stays on this device only and is never written into the app file.</div>
+      </div>
+      <div><button class="btn primary sm" id="elSaveKey">Save key</button></div>
+      <div class="hint" id="elStatus" style="margin-top:8px"></div>
+    </div>`;
+  }
+  const v=DB.prefs.elVoice;
+  return `<div class="card" id="elPanel">
+    <div class="optrow">
+      <label>ElevenLabs voice <select id="elVoiceSel"><option value="">${v?esc(v.name):'Loading voices...'}</option></select></label>
+      <button class="btn sm" id="elPrev">${icon('play')} Preview</button>
+      <button class="btn primary sm" id="elGen">Generate audio</button>
+    </div>
+    <div class="hint" id="elStatus" style="margin-top:6px">Generate once per passage. Playback then comes from the cache on this device, free and offline.</div>
+    <div class="optrow" style="margin-top:8px">
+      <button class="btn sm" id="elClear">Clear cached audio</button>
+      <button class="btn sm danger" id="elForget">Remove key</button>
+    </div>
+  </div>`;
+}
+let elPrevAudio=null;
+async function loadELVoices(){
+  const sel=$('#elVoiceSel');if(!sel)return;
+  try{
+    if(!EL.voicesCache)EL.voicesCache=await EL.listVoices();
+    const cur=EL.voiceId();
+    sel.innerHTML=EL.voicesCache.length
+      ?EL.voicesCache.map(v=>`<option value="${escAttr(v.id)}" ${v.id===cur?'selected':''}>${esc(v.name)}</option>`).join('')
+      :'<option value="">No voices found</option>';
+    if(!cur&&EL.voicesCache.length){const f=EL.voicesCache[0];DB.prefs.elVoice={id:f.id,name:f.name};save();}
+  }catch(e){
+    sel.innerHTML='<option value="">Could not load voices</option>';
+    const st=$('#elStatus');if(st)st.textContent=(e&&e.message)||'Check the key and connection.';
+  }
+}
+function wireELPanel(p){
+  if(!$('#elPanel'))return;
+  const keyIn=$('#elKey');
+  if(keyIn){
+    const saveKey=async()=>{
+      const k=keyIn.value.trim();
+      if(!k){toast('Paste your API key first');return;}
+      $('#elStatus').textContent='Checking key...';
+      ELKey.set(k);EL.voicesCache=null;
+      try{EL.voicesCache=await EL.listVoices();toast('Key saved');renderPanel();}
+      catch(err){ELKey.clear();$('#elStatus').textContent=(err&&err.message)||'That key did not work.';}
+    };
+    $('#elSaveKey').addEventListener('click',saveKey);
+    keyIn.addEventListener('keydown',e=>{if(e.key==='Enter')saveKey();});
+    return;
+  }
+  loadELVoices();
+  $('#elVoiceSel').addEventListener('change',e=>{
+    const v=(EL.voicesCache||[]).find(x=>x.id===e.target.value);
+    if(v){stopAll();DB.prefs.elVoice={id:v.id,name:v.name};save();}
+  });
+  $('#elPrev').addEventListener('click',()=>{
+    if(elPrevAudio){try{elPrevAudio.pause();}catch(e){}elPrevAudio=null;return;}
+    const v=(EL.voicesCache||[]).find(x=>x.id===EL.voiceId());
+    if(!v||!v.preview){toast('No preview available for this voice');return;}
+    stopAll();
+    elPrevAudio=new Audio(v.preview);
+    elPrevAudio.onended=()=>{elPrevAudio=null;};
+    elPrevAudio.play().catch(()=>{toast('Could not play the preview');elPrevAudio=null;});
+  });
+  $('#elGen').addEventListener('click',async()=>{
+    if(!EL.voiceId()){toast('Pick a voice first');return;}
+    const st=$('#elStatus'),btn=$('#elGen');
+    btn.disabled=true;
+    try{
+      const made=await EL.generateAll(p,(d,t)=>{st.textContent='Generating chunk '+d+' of '+t+'...';});
+      st.textContent=made?'Audio ready. Cached '+made+' new clip'+(made===1?'':'s')+' on this device.':'Audio was already cached for this voice.';
+    }catch(err){st.textContent=(err&&err.message)||'Generation failed. Check the key, quota, and connection.';}
+    btn.disabled=false;
+  });
+  $('#elClear').addEventListener('click',async()=>{await ELDB.clear();const st=$('#elStatus');if(st)st.textContent='Cached audio cleared.';});
+  $('#elForget').addEventListener('click',()=>{ELKey.clear();EL.voicesCache=null;stopAll();renderPanel();toast('Key removed from this device');});
+}
+function refreshVoiceSelect(){
+  const sel=$('#voiceSel');if(!sel)return;
+  const vs=TTS.voices,cur=DB.prefs.voiceURI;
+  const en=vs.filter(v=>/^en/i.test(v.lang)),rest=vs.filter(v=>!/^en/i.test(v.lang));
+  const list=[...en,...rest];
+  sel.innerHTML=list.length
+    ?list.map(v=>`<option value="${escAttr(v.voiceURI)}" ${v.voiceURI===cur?'selected':''}>${esc(v.name)}</option>`).join('')
+    :'<option value="">Default voice</option>';
+}
+
+/* ---------- gradual hide ---------- */
+function hideHTML(text,level){
+  let wi=0;
+  return tokenize(text).map(tk=>{
+    if(tk.k==='br')return '<br>';
+    if(tk.k!=='w')return esc(tk.x);
+    const i=wi++;
+    let hidden=false,fl=false;
+    if(level===1)hidden=(i%3===2);
+    else if(level===2)hidden=(i%2===1);
+    else if(level===3){hidden=true;fl=true;}
+    else if(level===4)hidden=true;
+    if(!hidden)return '<span class="word">'+esc(tk.x)+'</span>';
+    const w=Math.max(2,tk.x.length);
+    return `<span class="hw" role="button" tabindex="0" data-w="${escAttr(tk.x)}" data-f="${fl?1:0}" style="--w:${w}ch" aria-label="hidden word">${fl?esc(tk.x[0]):'\u00a0'}</span>`;
+  }).join('');
+}
+function panelHide(box,p){
+  const levels=[['Full text',0],['Hide 1 of 3',1],['Hide 1 of 2',2],['First letters',3],['All hidden',4]];
+  box.innerHTML=`
+    <p class="modehint">Raise the level as recall gets easier. Tap any blank to peek at that word, or press <b>H</b> to peek at everything.</p>
+    <div class="card"><div class="seg" id="hideSeg">${levels.map(l=>`<button data-l="${l[1]}" class="${PS.hide===l[1]?'on':''}">${l[0]}</button>`).join('')}</div></div>
+    <div class="card"><div class="ptext" id="hideText"></div></div>`;
+  const draw=()=>{$('#hideText').innerHTML=hideHTML(p.text,PS.peek?0:PS.hide);};
+  $('#hideSeg').addEventListener('click',e=>{
+    const b=e.target.closest('button');if(!b)return;
+    PS.hide=Number(b.dataset.l);PS.peek=false;
+    $$('#hideSeg button').forEach(x=>x.classList.toggle('on',x===b));
+    draw();
+  });
+  draw();
+}
+
+/* ---------- first letters ---------- */
+function panelLetters(box,p){
+  const st=PS.fl;
+  box.innerHTML=`
+    <p class="modehint">Recite out loud from the first letters. Peek when you get stuck, then try that part again without peeking.</p>
+    <div class="card">
+      <div class="seg" id="flSeg">
+        <button data-s="all" class="${st.scope==='all'?'on':''}">Whole passage</button>
+        <button data-s="chunk" class="${st.scope==='chunk'?'on':''}">Chunk by chunk</button>
+      </div>
+      <div id="flBody" style="margin-top:14px"></div>
+    </div>`;
+  const draw=()=>{
+    const body=$('#flBody');
+    if(st.scope==='all'){
+      body.innerHTML=`<div class="fltext">${esc(firstLetters(p.text))}</div>
+        <div class="flnav"><button class="btn sm" id="flPeek">${icon('eye')} ${st.peek?'Hide full text':'Peek full text'}</button></div>
+        ${st.peek?`<div class="peekbox">${esc(p.text).replace(/\n/g,'<br>')}</div>`:''}`;
+    }else{
+      st.idx=clamp(st.idx,0,p.chunks.length-1);
+      const c=p.chunks[st.idx];
+      body.innerHTML=`<div class="mut small">Chunk ${st.idx+1} of ${p.chunks.length}</div>
+        <div class="fltext" style="margin-top:6px">${esc(firstLetters(c))}</div>
+        <div class="flnav">
+          <button class="btn sm" id="flPrev" ${st.idx===0?'disabled':''}>${icon('back')} Prev</button>
+          <button class="btn sm" id="flPeek">${icon('eye')} ${st.peek?'Hide':'Peek'}</button>
+          <button class="btn sm" id="flNext" ${st.idx>=p.chunks.length-1?'disabled':''}>Next ${icon('next')}</button>
+        </div>
+        ${st.peek?`<div class="peekbox">${esc(c)}</div>`:''}`;
+      const pv=$('#flPrev'),nx=$('#flNext');
+      if(pv)pv.addEventListener('click',()=>{st.idx--;st.peek=false;draw();});
+      if(nx)nx.addEventListener('click',()=>{st.idx++;st.peek=false;draw();});
+    }
+    $('#flPeek').addEventListener('click',()=>{st.peek=!st.peek;draw();});
+  };
+  $('#flSeg').addEventListener('click',e=>{
+    const b=e.target.closest('button');if(!b)return;
+    st.scope=b.dataset.s;st.peek=false;
+    $$('#flSeg button').forEach(x=>x.classList.toggle('on',x===b));
+    draw();
+  });
+  draw();
+}
+
+/* ---------- fill in the blank ---------- */
+function panelBlanks(box,p){
+  const st=PS.blanks;
+  box.innerHTML=`
+    <p class="modehint">Type the missing words, then check. Missed words feed your tricky words list, so they show up more often.</p>
+    <div class="card">
+      <div class="optrow" style="justify-content:flex-start">
+        <label>Difficulty <select id="blDiff">
+          <option value="0.2">Easy &middot; 20% hidden</option>
+          <option value="0.4">Medium &middot; 40%</option>
+          <option value="0.6">Hard &middot; 60%</option>
+          <option value="0.8">Extreme &middot; 80%</option>
+        </select></label>
+        <button class="btn sm" id="blNew">${icon('repeat')} New round</button>
+        <button class="btn sm" id="blHintFL" title="Fill the first letter of the selected blank">First letter</button>
+        <button class="btn sm" id="blHintRev" title="Reveal the selected blank (counts as a miss)">Reveal word</button>
+      </div>
+    </div>
+    <div class="card"><div class="ptext" id="blText"></div></div>
+    <div id="blResult"></div>
+    <div style="margin-top:14px;text-align:center"><button class="btn primary big" id="blCheck">${icon('check')} Check answers</button></div>`;
+  $('#blDiff').value=String(st.pct);
+  let lastBlank=null,done=false;
+  const build=()=>{
+    done=false;
+    const toks=tokenize(p.text),widx=[];
+    toks.forEach((tk,i)=>{if(tk.k==='w')widx.push(i);});
+    const k=Math.max(1,Math.round(widx.length*st.pct));
+    const pool=[...widx],chosen=new Set();
+    while(chosen.size<k&&pool.length){const j=Math.floor(Math.random()*pool.length);chosen.add(pool.splice(j,1)[0]);}
+    $('#blText').innerHTML=toks.map((tk,i)=>{
+      if(tk.k==='br')return '<br>';
+      if(tk.k!=='w'||!chosen.has(i))return esc(tk.x);
+      return `<input class="bl" data-a="${escAttr(tk.x)}" style="width:${Math.max(3,tk.x.length+1)}ch" autocapitalize="off" autocomplete="off" spellcheck="false" aria-label="missing word">`;
+    }).join('');
+    $('#blResult').innerHTML='';
+    $('#blCheck').disabled=false;
+    lastBlank=null;
+  };
+  $('#blText').addEventListener('focusin',e=>{if(e.target.classList.contains('bl'))lastBlank=e.target;});
+  $('#blHintFL').addEventListener('click',()=>{
+    if(!lastBlank||done)return toast('Tap a blank first');
+    lastBlank.value=lastBlank.dataset.a[0];lastBlank.focus();
+  });
+  $('#blHintRev').addEventListener('click',()=>{
+    if(!lastBlank||done)return toast('Tap a blank first');
+    lastBlank.value=lastBlank.dataset.a;lastBlank.dataset.rev='1';lastBlank.focus();
+  });
+  $('#blNew').addEventListener('click',build);
+  $('#blDiff').addEventListener('change',e=>{st.pct=Number(e.target.value);build();});
+  $('#blCheck').addEventListener('click',()=>{
+    const ins=$$('#blText .bl');
+    if(!ins.length||done)return;
+    let ok=0;const missed=[];
+    ins.forEach(inp=>{
+      const a=inp.dataset.a;
+      const good=!inp.dataset.rev&&normWord(inp.value.trim(),false)===normWord(a,false);
+      inp.classList.add(good?'ok':'bad');
+      inp.disabled=true;
+      if(good)ok++;
+      else{missed.push(a);inp.insertAdjacentHTML('afterend','<span class="corr">'+esc(a)+'</span>');}
+    });
+    const score=Math.round(ok/ins.length*100);
+    done=true;$('#blCheck').disabled=true;
+    addWeak(p,missed);applyScore(p,score,'blanks');updatePHead(p);
+    $('#blResult').innerHTML=resultCard(score,missed,'You filled '+ok+' of '+ins.length+' blanks.')
+      +'<div style="text-align:center;margin-top:10px"><button class="btn" id="blAgain">Practice again</button></div>';
+    $('#blAgain').addEventListener('click',build);
+    $('#blResult').scrollIntoView({block:'nearest',behavior:SMOOTH});
+  });
+  build();
+}
+
+/* ---------- type from memory ---------- */
+function renderDiffText(text,flags,kind){
+  let wi=0;
+  return tokenize(text).map(tk=>{
+    if(tk.k==='br')return '<br>';
+    if(tk.k!=='w')return esc(tk.x);
+    const f=flags[wi++];
+    const cls=f?'okw':(kind==='orig'?'miss':'extra');
+    return '<span class="dw '+cls+'">'+esc(tk.x)+'</span>';
+  }).join('');
+}
+function panelType(box,p){
+  const st=PS.type;
+  const scopes=[[-1,'Entire passage']].concat(p.chunks.map((c,i)=>[i,'Chunk '+(i+1)+': '+c.slice(0,26)+(c.length>26?'\u2026':'')]));
+  box.innerHTML=`
+    <p class="modehint">Hide the passage and write it out. Matching is forgiving with capitalization and punctuation unless strict mode is on.</p>
+    <div class="card">
+      <div class="optrow" style="justify-content:flex-start">
+        <label>Scope <select id="tScope">${scopes.map(s=>`<option value="${s[0]}" ${Number(st.scope)===s[0]?'selected':''}>${esc(s[1])}</option>`).join('')}</select></label>
+        <label><input type="checkbox" class="switch" id="tStrict" ${st.strict?'checked':''}> Strict mode</label>
+      </div>
+      <textarea id="typeBox" placeholder="Type the passage from memory..." autocapitalize="off" spellcheck="false"></textarea>
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:10px;flex-wrap:wrap">
+        <button class="btn" id="tClear">Clear</button>
+        <button class="btn primary" id="tCheck">${icon('check')} Check my recall</button>
+      </div>
+    </div>
+    <div id="tResult"></div>`;
+  $('#tScope').addEventListener('change',e=>{st.scope=Number(e.target.value);});
+  $('#tStrict').addEventListener('change',e=>{st.strict=e.target.checked;});
+  $('#tClear').addEventListener('click',()=>{$('#typeBox').value='';$('#tResult').innerHTML='';});
+  $('#tCheck').addEventListener('click',()=>{
+    const target=st.scope<0?p.text:p.chunks[st.scope];
+    const typed=$('#typeBox').value;
+    const ow=wordsOf(target),tw=wordsOf(typed);
+    if(!tw.length){toast('Type something first');return;}
+    const r=diffWords(ow,tw,st.strict);
+    const score=Math.round(r.match/ow.length*100);
+    const missed=ow.filter((w,i)=>!r.fa[i]);
+    addWeak(p,missed);applyScore(p,score,'type');updatePHead(p);
+    $('#tResult').innerHTML=resultCard(score,missed,r.match+' of '+ow.length+' words recalled.')
+      +`<div class="card" style="margin-top:14px">
+        <div class="legend">
+          <span><i style="background:var(--accent-soft)"></i>Recalled</span>
+          <span><i style="background:var(--ribbon-soft)"></i>Missing</span>
+          <span><i style="background:color-mix(in srgb,var(--extra) 18%,transparent)"></i>Extra or wrong</span>
+        </div>
+        <div class="mut small" style="margin:12px 0 4px">Original</div>
+        <div class="ptext" style="font-size:1.02rem">${renderDiffText(target,r.fa,'orig')}</div>
+        <div class="mut small" style="margin:16px 0 4px">What you typed</div>
+        <div class="ptext" style="font-size:1.02rem">${renderDiffText(typed,r.fb,'typed')}</div>
+      </div>`;
+    $('#tResult').scrollIntoView({block:'nearest',behavior:SMOOTH});
+  });
+}
+
+/* ---------- chunk builder chain ---------- */
+function chainSteps(n){
+  const s=[];
+  for(let i=0;i<n;i++){
+    s.push({idxs:[i],label:'Learn chunk '+(i+1)});
+    if(i>0)s.push({idxs:Array.from({length:i+1},(_,k)=>k),label:'Chunks 1 to '+(i+1)+' together'});
+  }
+  return s;
+}
+function panelChain(box,p){
+  const st=PS.chain;
+  const steps=chainSteps(p.chunks.length);
+  if(!st.on){
+    box.innerHTML=`<div class="card">
+      <div class="steplabel">Build the chain</div>
+      <p class="mut">Master chunk 1, then chunk 2, then say them together. Each new chunk joins the chain until you can carry the whole passage from the top.</p>
+      <p class="mut small">${steps.length} steps for this passage.</p>
+      <div class="chainbtns"><button class="btn primary big" id="chStart">Start the chain</button></div>
+    </div>`;
+    $('#chStart').addEventListener('click',()=>{
+      Object.assign(st,{on:true,step:0,struggles:0,vis:'full',scored:false});
+      touchStreak();renderPanel();
+    });
+    return;
+  }
+  if(st.step>=steps.length){
+    const score=clamp(100-st.struggles*8,50,100);
+    if(!st.scored){st.scored=true;applyScore(p,score,'chain');updatePHead(p);}
+    box.innerHTML=resultCard(score,null,'Chain complete: '+steps.length+' steps, '+st.struggles+' peek'+(st.struggles===1?'':'s')+' needed.')
+      +`<div style="text-align:center;margin-top:12px">
+        <button class="btn primary" id="chRestart">Run the chain again</button>
+        <button class="btn" data-act="home">Done for now</button>
+      </div>`;
+    $('#chRestart').addEventListener('click',()=>{
+      Object.assign(st,{on:true,step:0,struggles:0,vis:'full',scored:false});
+      renderPanel();
+    });
+    return;
+  }
+  const stepObj=steps[st.step];
+  const text=stepObj.idxs.map(i=>p.chunks[i]).join('\n');
+  const draw=()=>{
+    const t=$('#chText');
+    if(st.vis==='full')t.innerHTML='<span class="word">'+esc(text).replace(/\n/g,'</span><br><span class="word">')+'</span>';
+    else if(st.vis==='fl')t.innerHTML='<span class="fltext" style="font-size:inherit">'+esc(firstLetters(text)).replace(/\n/g,'<br>')+'</span>';
+    else t.innerHTML=hideHTML(text,4);
+    $$('#chVis button').forEach(b=>b.classList.toggle('on',b.dataset.v===st.vis));
+  };
+  box.innerHTML=`
+    <div class="card">
+      <div class="mut small">Step ${st.step+1} of ${steps.length}</div>
+      <div class="chainbar"><i style="width:${Math.round(st.step/steps.length*100)}%"></i></div>
+      <div class="steplabel">${esc(stepObj.label)}</div>
+      <p class="modehint" style="margin-top:6px">${stepObj.idxs.length>1?'Recite the whole chain from first letters, then check yourself.':'Read it, listen to it in your head, then hide it and say it.'}</p>
+      <div class="seg" id="chVis" style="margin-top:6px">
+        <button data-v="full">Full text</button>
+        <button data-v="fl">First letters</button>
+        <button data-v="hidden">Hidden</button>
+      </div>
+      <div class="ptext" id="chText" style="margin-top:14px"></div>
+      <div class="chainbtns">
+        <button class="btn" id="chStruggle">${icon('repeat')} I needed to look</button>
+        <button class="btn primary" id="chGot">Got it ${icon('next')}</button>
+      </div>
+    </div>`;
+  $('#chVis').addEventListener('click',e=>{
+    const b=e.target.closest('button');if(!b)return;
+    st.vis=b.dataset.v;draw();
+  });
+  $('#chStruggle').addEventListener('click',()=>{st.struggles++;st.vis='full';draw();});
+  $('#chGot').addEventListener('click',()=>{
+    st.step++;
+    const nxt=steps[st.step];
+    st.vis=nxt&&nxt.idxs.length>1?'fl':'full';
+    renderPanel();
+  });
+  draw();
+}
+
+/* ---------- flashcards ---------- */
+function panelCards(box,p){
+  const st=PS.cards;
+  if(!st.on){
+    box.innerHTML=`<div class="card">
+      <div class="steplabel">Flashcards</div>
+      <p class="mut">Each chunk becomes a card. See the opening words, recall the rest out loud, flip, and rate yourself. Weakest chunks come first.</p>
+      <div class="chainbtns"><button class="btn primary big" id="fcStart">Start &middot; ${p.chunks.length} card${p.chunks.length===1?'':'s'}</button></div>
+    </div>`;
+    $('#fcStart').addEventListener('click',()=>{
+      Object.assign(st,{on:true,i:0,flip:false,ratings:[],scored:false});
+      st.order=p.chunks.map((_,i)=>i).sort((a,b)=>((p.chunkStats[a]&&p.chunkStats[a].m)||0)-((p.chunkStats[b]&&p.chunkStats[b].m)||0));
+      touchStreak();renderPanel();
+    });
+    return;
+  }
+  if(st.i>=st.order.length){
+    const avg=st.ratings.length?Math.round(st.ratings.reduce((a,b)=>a+b,0)/st.ratings.length):0;
+    if(!st.scored){st.scored=true;applyScore(p,avg,'cards');updatePHead(p);}
+    box.innerHTML=resultCard(avg,null,st.order.length+' cards reviewed.')
+      +'<div style="text-align:center;margin-top:12px"><button class="btn primary" id="fcAgain">Another round</button></div>';
+    $('#fcAgain').addEventListener('click',()=>{Object.assign(st,{on:false});renderPanel();});
+    return;
+  }
+  const ci=st.order[st.i],chunk=p.chunks[ci];
+  const w=wordsOf(chunk);
+  const nf=Math.min(5,Math.max(1,w.length-1));
+  const front=w.length>1?w.slice(0,nf).join(' ')+' ...':'Recall this chunk';
+  box.innerHTML=`
+    <div class="mut small" style="text-align:center;margin-bottom:8px">Card ${st.i+1} of ${st.order.length} &middot; chunk ${ci+1}</div>
+    <div class="card fcard" id="fcCard" role="button" tabindex="0">
+      <div class="side">${st.flip?esc(chunk):esc(front)}</div>
+      <div class="flip">${st.flip?'How well did you recall it?':'Tap to flip'}</div>
+    </div>
+    ${st.flip?`<div class="rateb">
+      <button class="btn" data-r="35" style="color:var(--bad)">Again</button>
+      <button class="btn" data-r="60" style="color:var(--extra)">Hard</button>
+      <button class="btn" data-r="85" style="color:var(--ok)">Good</button>
+      <button class="btn primary" data-r="100">Easy</button>
+    </div>`:''}`;
+  $('#fcCard').addEventListener('click',()=>{if(!st.flip){st.flip=true;renderPanel();}});
+  $('#fcCard').addEventListener('keydown',e=>{if(e.key==='Enter'&&!st.flip){st.flip=true;renderPanel();}});
+  $$('.rateb .btn').forEach(b=>b.addEventListener('click',()=>{
+    const r=Number(b.dataset.r);
+    const cs=p.chunkStats[ci]||(p.chunkStats[ci]={m:0});
+    cs.m=Math.round((cs.m||0)*0.5+r*0.5);
+    st.ratings.push(r);st.i++;st.flip=false;
+    save();renderPanel();
+  }));
+}
+
+/* ---------- shared result card ---------- */
+function resultCard(score,missed,sub){
+  const cls=score>=90?'good':score>=70?'mid':'low';
+  const msg=score>=95?'Outstanding recall.'
+    :score>=85?'Very strong. One more pass will lock it in.'
+    :score>=70?'Good progress. Review the misses and go again.'
+    :'Keep at it. Repetition is the whole game.';
+  const uniq=missed?[...new Set(missed.map(w=>w.toLowerCase()))].slice(0,14):[];
+  return `<div class="card" style="margin-top:14px">
+    <div class="scorebar"><span class="scoreN ${cls}">${score}%</span>
+      <div><div style="font-weight:600">${msg}</div><div class="mut small">${esc(sub||'')}</div></div>
+    </div>
+    ${uniq.length?'<div class="mut small">Missed words</div><div class="wchips">'+uniq.map(w=>'<span class="wchip">'+esc(w)+'</span>').join('')+'</div>':''}
+  </div>`;
+}
+
+/* ================= focus mode overlay ================= */
+function openFocus(p){
+  $('#focusOv').classList.remove('hidden');
+  $('#ovTitle').textContent=p.title;
+  $('#ovText').textContent=(p.chunks[PS.chunk]||'').replace(/\s+/g,' ');
+  document.body.style.overflow='hidden';
+  const g=ENGINE();
+  if(g.onstate)g.onstate(g.state);
+  if(g.state==='idle'&&Listen.start)Listen.start();
+}
+function closeFocus(){
+  const ov=$('#focusOv');
+  if(!ov||ov.classList.contains('hidden'))return;
+  ov.classList.add('hidden');
+  document.body.style.overflow='';
+}
+$('#ovClose').addEventListener('click',closeFocus);
+$('#ovPlay').addEventListener('click',()=>ENGINE().toggle(Listen.start));
+$('#ovPrev').addEventListener('click',()=>{const g=ENGINE();g.state!=='idle'?g.jump(-1):(Listen.step&&Listen.step(-1));});
+$('#ovNext').addEventListener('click',()=>{const g=ENGINE();g.state!=='idle'?g.jump(1):(Listen.step&&Listen.step(1));});
+
+/* ================= keyboard shortcuts ================= */
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){closeFocus();return;}
+  const t=e.target;
+  if(t&&(/INPUT|TEXTAREA|SELECT|BUTTON/.test(t.tagName)||t.isContentEditable))return;
+  if(!DB||VIEW.name!=='practice'||!PS)return;
+  const k=e.key.toLowerCase();
+  if(e.key===' '){
+    if(PS.mode==='listen'||!$('#focusOv').classList.contains('hidden')){e.preventDefault();ENGINE().toggle(Listen.start);}
+  }else if(k==='r'){
+    const g=ENGINE();
+    if(g.state!=='idle')g.again();
+    else if(PS.mode==='listen'&&Listen.start)Listen.start();
+  }else if(k==='n'||k==='p'){
+    const d=k==='n'?1:-1;
+    if(PS.mode==='listen'){const g=ENGINE();g.state!=='idle'?g.jump(d):(Listen.step&&Listen.step(d));}
+    else if(PS.mode==='letters'&&PS.fl.scope==='chunk'){
+      const p=findP(PS.pid);
+      PS.fl.idx=clamp(PS.fl.idx+d,0,p.chunks.length-1);PS.fl.peek=false;renderPanel();
+    }else if(PS.mode==='chain'&&PS.chain.on&&k==='n'){
+      const b=$('#chGot');if(b)b.click();
+    }
+  }else if(k==='h'){
+    if(PS.mode==='hide'){PS.peek=!PS.peek;renderPanel();}
+    else if(PS.mode==='letters'){PS.fl.peek=!PS.fl.peek;renderPanel();}
+  }
+});
+
+/* ================= init ================= */
+(async function init(){
+  await Store.init();
+  const loaded=await Store.load();
+  DB=migrate(loaded||freshDB());
+  if(!DB.seeded){
+    seedSample();
+    DB.seeded=true;
+    for(const b of BADGES){if(b.test(DB)&&!DB.stats.earned.includes(b.id))DB.stats.earned.push(b.id);}
+    Store.persist(DB);
+  }
+  document.documentElement.dataset.theme=DB.prefs.theme;
+  document.body.classList.toggle('large',!!DB.prefs.large);
+  $('#ovPlay').innerHTML=icon('play');
+  TTS.init();
+  render();
+})();
+</script>
+</body>
+</html>
